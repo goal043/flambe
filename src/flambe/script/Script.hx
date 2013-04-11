@@ -38,7 +38,6 @@ class Script extends Component
     {
         var i:Int = _handles.length;
         while (i-->0) {
-            trace("Disposing handle");
             _handles[i].dispose();
         }
         _handles = [];
@@ -84,7 +83,6 @@ private class Handle
 
     public function dispose ()
     {
-        trace("dispose");
         removed = true;
         action.dispose();
         action = null;

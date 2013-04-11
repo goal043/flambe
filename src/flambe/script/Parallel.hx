@@ -78,6 +78,8 @@ class Parallel
         while(i-->0) {
             _runningActions[i].dispose();
         }
+        _completedActions = _completedActions.concat(_runningActions);
+        _runningActions = [];
     }
 
     private var _runningActions :Array<Action>;

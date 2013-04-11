@@ -77,7 +77,6 @@ class Sequence
     }
 
     public function dispose () :Void {
-        trace("Disposing sequence");
         var i:Int = _runningActions.length;
         while(i-->0) {
             _runningActions[i].dispose();

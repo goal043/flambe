@@ -34,7 +34,6 @@ class PlaySound
     }
     
     public function dispose () :Void {
-        trace("Disposing sound");
         if (_playback != null) {
             _playback.dispose();
             _playback = null;
