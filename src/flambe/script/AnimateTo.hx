@@ -38,6 +38,9 @@ class AnimateTo
         return -1;
     }
 
+    public function dispose () :Void
+    {}
+
     private var _tween :Tween;
 
     private var _value :AnimatedFloat;

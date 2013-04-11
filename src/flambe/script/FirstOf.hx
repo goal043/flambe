@@ -33,6 +33,7 @@ class FirstOf
 
     public function removeAll ()
     {
+        dispose();
         _runningActions = [];
     }
 
@@ -48,6 +49,13 @@ class FirstOf
         }
 
         return -1;
+    }
+
+    public function dispose () :Void {
+        var i:Int = _runningActions.length;
+        while(i-->0) {
+            _runningActions[i].dispose();
+        }
     }
 
     private var _runningActions :Array<Action>;

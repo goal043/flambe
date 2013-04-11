@@ -12,9 +12,12 @@ import flambe.util.Disposable;
  */
 class Script extends Component
 {
+    /** Tracks if the script is running or not. */
+    public var running(get_running, null) :Bool;
+
     public function new ()
     {
-        stopAll();
+        _handles = [];
     }
 
     /**
@@ -33,6 +36,11 @@ class Script extends Component
      */
     public function stopAll ()
     {
+        var i:Int = _handles.length;
+        while (i-->0) {
+            trace("Disposing handle");
+            _handles[i].dispose();
+        }
         _handles = [];
     }
 
@@ -47,6 +55,16 @@ class Script extends Component
                 ++ii;
             }
         }
+    }
+
+    override public function onRemoved ()
+    {
+        stopAll();
+    }
+
+    private function get_running ():Bool
+    {
+        return _handles.length > 0;
     }
 
     private var _handles :Array<Handle>;
@@ -66,7 +84,9 @@ private class Handle
 
     public function dispose ()
     {
+        trace("dispose");
         removed = true;
+        action.dispose();
         action = null;
     }
 }

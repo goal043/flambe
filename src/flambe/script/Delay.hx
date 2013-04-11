@@ -29,6 +29,9 @@ class Delay
         return -1;
     }
 
+    public function dispose () :Void
+    {}
+
     private var _duration :Float;
     private var _elapsed :Float;
 }

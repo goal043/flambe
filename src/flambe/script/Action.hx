@@ -5,11 +5,13 @@
 package flambe.script;
 
 import flambe.Entity;
+import flambe.util.Disposable;
 
 /**
  * Represents a unit of execution that is called over time.
  */
 interface Action
+    implements Disposable
 {
     /**
      * Called when the acting entity has been updated.

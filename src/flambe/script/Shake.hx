@@ -48,6 +48,9 @@ class Shake
         return -1;
     }
 
+    public function dispose () :Void
+    {}
+
     private var _elapsed :Float;
     private var _jitterX :Jitter;
     private var _jitterY :Jitter;

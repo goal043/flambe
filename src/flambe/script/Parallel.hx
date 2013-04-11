@@ -38,6 +38,7 @@ class Parallel
 
     public function removeAll ()
     {
+        dispose();
         _runningActions = [];
         _completedActions = [];
     }
@@ -70,6 +71,13 @@ class Parallel
             return maxSpent;
         }
         return -1;
+    }
+
+    public function dispose () :Void {
+        var i:Int = _runningActions.length;
+        while(i-->0) {
+            _runningActions[i].dispose();
+        }
     }
 
     private var _runningActions :Array<Action>;

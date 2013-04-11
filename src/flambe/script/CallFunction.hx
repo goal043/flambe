@@ -26,5 +26,8 @@ class CallFunction
         return 0;
     }
 
+    public function dispose () :Void
+    {}
+
     private var _fn :Void -> Dynamic;
 }

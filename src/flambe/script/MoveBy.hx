@@ -48,6 +48,9 @@ class MoveBy
         return -1;
     }
 
+    public function dispose () :Void
+    {}
+
     private var _tweenX :Tween;
     private var _tweenY :Tween;
 

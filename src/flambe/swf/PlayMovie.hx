@@ -38,6 +38,10 @@ class PlayMovie
         return -1; // Keep going
     }
 
+    public function dispose () :Void {
+        _movie = null;
+    }
+
     private var _name :String;
     private var _movie :MovieSprite;
 }

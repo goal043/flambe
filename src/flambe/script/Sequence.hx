@@ -38,6 +38,7 @@ class Sequence
 
     public function removeAll ()
     {
+        dispose();
         _idx = 0;
         _runningActions = [];
     }
@@ -73,6 +74,14 @@ class Sequence
         }
 
         return total;
+    }
+
+    public function dispose () :Void {
+        trace("Disposing sequence");
+        var i:Int = _runningActions.length;
+        while(i-->0) {
+            _runningActions[i].dispose();
+        }
     }
 
     private var _runningActions :Array<Action>;

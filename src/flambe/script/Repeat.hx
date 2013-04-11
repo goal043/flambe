@@ -39,6 +39,11 @@ class Repeat
         return -1;
     }
 
+    public function dispose () :Void
+    {
+        _action.dispose();
+    }
+
     private var _action :Action;
 
     private var _count :Int;
