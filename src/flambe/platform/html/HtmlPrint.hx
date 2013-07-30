@@ -5,6 +5,7 @@ import flambe.display.Texture;
 import flambe.platform.BasicPrint;
 import flambe.platform.html.HtmlUtil;
 import haxe.io.Bytes;
+import haxe.io.BytesData;
 import js.html.CanvasElement;
 import js.html.CanvasRenderingContext2D;
 import js.html.DOMWindow;
@@ -26,7 +27,16 @@ class HtmlPrint extends BasicPrint
 		var ctx :CanvasRenderingContext2D = canvas.getContext2d();
 		var pixels :Bytes = tex.readPixels(0, 0, tex.width, tex.height);
 		var canvasData :ImageData = ctx.createImageData(tex.width, tex.height);
-		canvasData.data.set(pixels.getData());
+		var notIE :Bool = untyped __js__("canvasData.data.set");
+		if ( notIE ) {
+			canvasData.data.set(pixels.getData()); // Support for setting the array.
+		} else {
+			var data :BytesData = pixels.getData();
+			for (i in 0...data.length) {
+				canvasData.data[i] = data[i];
+			}
+		}
+
 		ctx.putImageData(canvasData, 0, 0);
 
 		// Create the dynamic image to put in an iframe and print.
@@ -34,13 +44,16 @@ class HtmlPrint extends BasicPrint
 		image.style.width = "100%"; // Automatically size to the width of the page.
 		image.src = canvas.toDataURL();
 
-		var iframe :IFrameElement = js.Browser.document.createIFrameElement();
-		iframe.frameBorder = "none";
-		iframe.style.visibility = "hidden";
-		js.Browser.window.document.body.appendChild(iframe);
+		var iframe :IFrameElement = null;
+		if (notIE) {
+			iframe = js.Browser.document.createIFrameElement();
+			iframe.frameBorder = "none";
+			iframe.style.visibility = "hidden";
+			js.Browser.window.document.body.appendChild(iframe);
+		}
 
 		// var w :DOMWindow = js.Browser.window.open("about:blank","printable");
-		var w :DOMWindow = iframe.contentWindow;
+		var w :DOMWindow = notIE ? iframe.contentWindow : js.Browser.window.open("about:blank","_blank");
 		w.document.open();
 		w.document.write("<!DOCTYPE html>");
 		w.document.write("<html><head><title>Printable</title></head><body></body></html>");
@@ -48,12 +61,14 @@ class HtmlPrint extends BasicPrint
 		
 		image.onload = function (e) {
 			
-			iframe.contentWindow.print();
+			w.print();
 
 			// Works reliably on firefox and chrome.
 			HtmlUtil.callLater(function() {
-				if (iframe.parentNode != null) {
+				if (notIE && iframe.parentNode != null) {
 					iframe.parentNode.removeChild(iframe);
+				} else if (!notIE) {
+					w.close();
 				}
 			},1000);
 		}
