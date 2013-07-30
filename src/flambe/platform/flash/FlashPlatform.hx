@@ -186,6 +186,15 @@ class FlashPlatform
         return _motion;
     }
 
+    public function getPrint() :PrintSystem
+    {
+        if (_print == null) {
+           return new FlashPrint();
+        }
+        return _print;
+
+    }
+
     public function getRenderer () :Renderer
     {
         return _renderer;
@@ -261,6 +270,7 @@ class FlashPlatform
     private var _external :ExternalSystem;
     private var _keyboard :KeyboardSystem;
     private var _motion :MotionSystem;
+    private var _print :PrintSystem;
     private var _storage :StorageSystem;
     private var _web :WebSystem;
 

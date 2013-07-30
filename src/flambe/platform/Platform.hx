@@ -18,6 +18,7 @@ interface Platform
     function getExternal () :ExternalSystem;
     function getKeyboard () :KeyboardSystem;
     function getMotion() :MotionSystem;
+    function getPrint() :PrintSystem;
     function getMouse () :MouseSystem;
     function getPointer () :PointerSystem;
     function getStage () :StageSystem;

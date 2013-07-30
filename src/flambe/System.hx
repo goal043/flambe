@@ -71,6 +71,11 @@ class System
      */
     public static var motion (get, null) :MotionSystem;
 
+    /**
+     * The Print subsystem, for sending dynamic content to the printer.
+     */
+    public static var print (get, null) :PrintSystem;
+
     // TODO(bruno): Subsystems for gamepads, haptic, geolocation, video, textInput
 
     /**
@@ -224,6 +229,12 @@ class System
     {
         #if debug assertCalledInit(); #end
         return _platform.getMotion();
+    }
+
+    inline static function get_print () :PrintSystem
+    {
+        #if debug assertCalledInit(); #end
+        return _platform.getPrint();
     }
 
     private static function assertCalledInit ()
