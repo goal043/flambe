@@ -20,12 +20,12 @@ class FlashPrint extends BasicPrint
     public function new()
     {}
 
-    override public function sendPage(e :Entity, orientation :Orientation) :Void
-    {
-        var bounds :flambe.math.Rectangle = flambe.display.Sprite.getBounds(e);
-        var bd :BitmapData = new BitmapData(bounds.width, bounds.height, true, 0);
+    // override public function sendPage(e :Entity, orientation :Orientation) :Void
+    // {
+    //     var bounds :flambe.math.Rectangle = flambe.display.Sprite.getBounds(e);
+    //     var bd :BitmapData = new BitmapData(Math.ceil(bounds.width), Math.ceil(bounds.height), true, 0);
 
-    }
+    // }
 
 	override private function sendToPrinter(tex :Texture)
 	{
