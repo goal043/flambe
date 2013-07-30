@@ -2,6 +2,7 @@ package flambe.platform.flash;
 
 import flambe.display.Orientation;
 import flambe.display.Texture;
+import flambe.Entity;
 import flambe.platform.BasicPrint;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
@@ -19,7 +20,14 @@ class FlashPrint extends BasicPrint
     public function new()
     {}
 
-	override private function sendToPrinter(tex :Texture, orientation :Orientation)
+    override public function sendPage(e :Entity, orientation :Orientation) :Void
+    {
+        var bounds :flambe.math.Rectangle = flambe.display.Sprite.getBounds(e);
+        var bd :BitmapData = new BitmapData(bounds.width, bounds.height, true, 0);
+
+    }
+
+	override private function sendToPrinter(tex :Texture)
 	{
 		var bd :BitmapData = new BitmapData(tex.width, tex.height);
 		var bit :Bitmap = new Bitmap(bd, PixelSnapping.AUTO, true);

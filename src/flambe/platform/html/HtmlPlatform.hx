@@ -384,6 +384,14 @@ class HtmlPlatform
         return _motion;
     }
 
+    public function getPrint () :PrintSystem
+    {
+        if (_print == null) {
+            _print = new HtmlPrint();
+        }
+        return _print;
+    }
+
     public function getRenderer () :Renderer
     {
         return _renderer;
@@ -440,6 +448,7 @@ class HtmlPlatform
     private var _external :ExternalSystem;
     private var _keyboard :BasicKeyboard;
     private var _motion :MotionSystem;
+    private var _print :PrintSystem;
     private var _storage :StorageSystem;
     private var _web :WebSystem;
 

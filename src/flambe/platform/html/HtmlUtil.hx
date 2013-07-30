@@ -135,7 +135,6 @@ class HtmlUtil
     public static function createCanvas (source :CanvasElement) :CanvasElement
     {
         var canvas = createEmptyCanvas(source.width, source.height);
-
         var ctx = canvas.getContext2d();
         ctx.save();
         ctx.globalCompositeOperation = "copy";
