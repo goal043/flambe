@@ -297,8 +297,12 @@ class FlashVideoView
 
             case "NetStream.Play.Complete", "NetStream.Play.Stop":
                 _seekTime = 0;
-                setState(VideoState.completed);
-                completed.emit();
+                if (!loop._) {                
+                    setState(VideoState.completed);
+                    completed.emit();
+                } else {
+                    _ns.seek(0);
+                }
 
             case "NetStream.Play.StreamNotFound":
                 error.emit("Stream not found");
