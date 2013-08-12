@@ -62,6 +62,11 @@ class System
     public static var web (get, null) :WebSystem;
 
     /**
+     * The Video subsystem, for playing videos on the device.
+     */
+    public static var video (get, null) :VideoSystem;
+
+    /**
      * The External subsystem, for interaction with external code.
      */
     public static var external (get, null) :ExternalSystem;
@@ -206,6 +211,12 @@ class System
     {
         #if debug assertCalledInit(); #end
         return _platform.getWeb();
+    }
+
+    inline private static function get_video () :VideoSystem
+    {
+        #if debug assertCalledInit(); #end
+        return _platform.getVideo();
     }
 
     inline private static function get_external () :ExternalSystem

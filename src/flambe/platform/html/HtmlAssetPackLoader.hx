@@ -138,6 +138,10 @@ class HtmlAssetPackLoader extends BasicAssetPackLoader
             downloadText(url, entry, function (text) {
                 handleLoad(entry, new BasicFile(text));
             });
+
+        case WEBM, MP4, OGV, FLV:
+           // Do nothing.
+
         }
     }
 

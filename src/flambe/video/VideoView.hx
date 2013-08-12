@@ -27,7 +27,7 @@ typedef VideoTimeRange = {
  * Displays a video over the stage. 
  */
 interface VideoView
-    implements Disposable
+    extends Disposable
 {
 
     /**

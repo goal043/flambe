@@ -24,6 +24,7 @@ interface Platform
     function getStorage () :StorageSystem;
     function getTouch () :TouchSystem;
     function getWeb () :WebSystem;
+    function getVideo () :VideoSystem;
 
     function getRenderer () :Renderer;
 
