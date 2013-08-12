@@ -25,13 +25,12 @@ class VideoProgressEvent
      */
     public var source (default, null) :VideoView;
 
-    /** @private */ public function new ()
+    @:allow(flambe) function new ()
     {
-        _internal_init(null, 0, null);
+        init(null, 0, null);
     }
 
-    /** @private */ public function _internal_init (
-        buffered :Array<VideoTimeRange>, currentTime :Float, source :VideoView)
+    @:allow(flambe) function init (buffered :Array<VideoTimeRange>, currentTime :Float, source :VideoView)
     {
         this.buffered = buffered;
         this.currentTime = currentTime;

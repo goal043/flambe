@@ -49,9 +49,9 @@ class FlashVideo
         return false;
     }
 
-    public function createView (x :Float, y :Float, width :Float, height :Float) :VideoView
+    public function createView (x :Float, y :Float, width :Float, height :Float, ?backgroundColor :Null<Int> = null) :VideoView
     {
-        var view = new FlashVideoView(x, y, width, height);
+        var view = new FlashVideoView(x, y, width, height, backgroundColor);
         _stage.addChild(view.container);
         FlashPlatform.instance.mainLoop.addTickable(view);
         return view;
@@ -83,7 +83,7 @@ class FlashVideoView
 
     public var container (default, null) :Sprite;
 
-    public function new (x :Float, y :Float, width :Float, height :Float)
+    public function new (x :Float, y :Float, width :Float, height :Float, backgroundColor :Null<Int>)
     {
         var onBoundsChanged = function (_,_) updateBounds();
         this.x = new AnimatedFloat(x, onBoundsChanged);
@@ -108,6 +108,7 @@ class FlashVideoView
         _ns.client = { onMetaData : onMetaData };
         _ns.addEventListener(NetStatusEvent.NET_STATUS, onEvent, false, 0, true);
         _video.attachNetStream(_ns);
+        _bgColor = backgroundColor;
 
         updateBounds();
 
@@ -182,6 +183,7 @@ class FlashVideoView
         if (_paused) {
             if (_loaded) {
                 _ns.resume();
+                setState(VideoState.playing);
             }
             _paused = false;
         }
@@ -195,6 +197,7 @@ class FlashVideoView
 
             if (_loaded) {
                 _ns.pause();
+                setState(VideoState.paused);
             }
 
             _paused = true;
@@ -249,7 +252,11 @@ class FlashVideoView
         width.update(dt);
         height.update(dt);
         volume.update(dt);
-
+        if (_updateProgress) {
+            var evt :VideoProgressEvent = new VideoProgressEvent();
+            evt.init(null, currentTime, this);
+            progress.emit(evt);
+        }
         return (_video == null);
     }
 
@@ -268,6 +275,7 @@ class FlashVideoView
         switch (e.info.code) {
             case "NetStream.Play.Start":
                 if (!_loaded) {
+                    _updateProgress = true;
                     _loaded = true;
                     setReady();
                 }
@@ -275,6 +283,7 @@ class FlashVideoView
             case "NetStream.Buffer.Full":
                 if(!_bufferFull) {
                     _bufferFull = true;
+                    _updateProgress = true;
                     setReady();
                 }
                 // setState(VideoState.playing);
@@ -298,6 +307,7 @@ class FlashVideoView
             case "NetStream.Pause.Notify":
                 if (_metaLoaded) {
                     _paused = true;
+                    _updateProgress = false;
                     setState(VideoState.paused);
                 }
             // case "pause":
@@ -307,6 +317,7 @@ class FlashVideoView
             case "NetStream.Play.Complete", "NetStream.Play.Stop":
                 _seekTime = 0;
                 if (!loop._) {                
+                    _updateProgress = false;
                     setState(VideoState.completed);
                     completed.emit();
                 } else {
@@ -337,8 +348,11 @@ class FlashVideoView
         container.x = x._;
         container.y = y._;
         container.graphics.clear();
-        container.graphics.beginFill(0,1);
-        container.graphics.drawRect(0,0,width._,height._);
+
+        if (_bgColor != null) {        
+            container.graphics.beginFill(_bgColor, 1);
+            container.graphics.drawRect(0,0,width._,height._);
+        }
         
         _video.width = width._;
         _video.height = height._;
@@ -367,6 +381,7 @@ class FlashVideoView
         }
 
         if (_metaLoaded && _loaded && _bufferFull && !_autoPlay) {
+            setState(VideoState.paused);
             _ns.pause();
         }
     }
@@ -393,4 +408,8 @@ class FlashVideoView
     private var _state :VideoState;
     private var _videoWidth :Float = 0;
     private var _videoHeight :Float = 0;
+    /** Tracks if we should be monitoring progress or not. */
+    private var _updateProgress :Bool = false;
+    /** The background color */
+    private var _bgColor :Null<Int>;
 }

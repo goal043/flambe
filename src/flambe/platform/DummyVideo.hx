@@ -29,7 +29,7 @@ class DummyVideo
         return true;
     }
 
-    public function createView (x :Float, y :Float, width :Float, height :Float) :VideoView
+    public function createView (x :Float, y :Float, width :Float, height :Float, ?backgroundColor :Null<Int>) :VideoView
     {
         Assert.fail("Video.createView is unsupported in this environment, check the `supported` flag.");
         return null;
