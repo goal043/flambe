@@ -192,14 +192,15 @@ class HtmlVideoView
     public function loadFromManifest (manifest :Manifest) :VideoView {
         clear();
 
+        for (node in video.childNodes) {
+            video.removeChild(node);
+        }
+
         var i:Iterator<AssetEntry> = manifest.iterator();
         for (entry in i) {
             if (HtmlVideo.supportedTypes.indexOf(entry.format) > -1) {
                 var source :SourceElement = Browser.document.createSourceElement();
                 source.src = entry.url;
-                for (node in video.childNodes) {
-                    video.removeChild(node);
-                }
                 video.appendChild(source);
             }
         }
