@@ -6,6 +6,8 @@ package flambe.platform.html;
 
 import flambe.asset.AssetEntry;
 import flambe.util.Signal0;
+import js.html.SourceElement;
+import js.html.VideoElement;
 import js.Lib;
 import js.Browser;
 
@@ -72,15 +74,18 @@ class HtmlVideo
         return _userActionRequired;
     }
 
-    public function createView (x :Float, y :Float, width :Float, height :Float) :VideoView
+    public function createView (x :Float, y :Float, width :Float, height :Float, ?backgroundColor :Null<Int> = null) :VideoView
     {
-        var video = Browser.document.createElement("video");
+        var video :VideoElement = Browser.document.createVideoElement();
         video.style.position = "absolute";
         video.style.border = "0";
-        video.style.backgroundColor = "#000000";
-        (untyped video).preload = "auto";
-        (untyped video).autoplay = _userActionRequired;
-        (untyped video).controls = _userActionRequired;
+        if (backgroundColor != null) {
+            video.style.backgroundColor = "#" + StringTools.hex(backgroundColor, 6);
+        }
+
+        video.preload = "auto";
+        video.autoplay = _userActionRequired;
+        video.controls = _userActionRequired;
 
         var view = new HtmlVideoView(video, x, y, width, height);
         _container.appendChild(video);
@@ -116,9 +121,9 @@ class HtmlVideoView
 
     // public var buffered (default, null) :Array<VideoTimeRange>;
 
-    public var video (default, null) :Dynamic;
+    public var video (default, null) :VideoElement;
 
-    public function new (video :Dynamic, x :Float, y :Float, width :Float, height :Float)
+    public function new (video :VideoElement, x :Float, y :Float, width :Float, height :Float)
     {
         this.video = video;
 
@@ -190,9 +195,11 @@ class HtmlVideoView
         var i:Iterator<AssetEntry> = manifest.iterator();
         for (entry in i) {
             if (HtmlVideo.supportedTypes.indexOf(entry.format) > -1) {
-                var source = Browser.document.createElement("source");
-                (untyped source).src = entry.url;
-                video.innerHtml = "";
+                var source :SourceElement = Browser.document.createSourceElement();
+                source.src = entry.url;
+                for (node in video.childNodes) {
+                    video.removeChild(node);
+                }
                 video.appendChild(source);
             }
         }
@@ -312,8 +319,8 @@ class HtmlVideoView
         }
         video.style.left = x._ + "px";
         video.style.top = y._ + "px";
-        video.width = width._;
-        video.height = height._;
+        video.width = Math.round(width._);
+        video.height = Math.round(height._);
     }
 
     private function setReady () {

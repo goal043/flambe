@@ -25,6 +25,6 @@ interface VideoSystem
      * Creates a blank VideoView with the given viewport bounds, in pixels. Fails with an assertion if
      * this environment doesn't support WebViews.
      */
-    function createView (x :Float, y :Float, width :Float, height :Float) :VideoView;
+    function createView (x :Float, y :Float, width :Float, height :Float, ?backgroundColor :Null<Int>) :VideoView;
 
 }
