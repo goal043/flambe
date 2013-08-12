@@ -260,7 +260,7 @@ class HtmlVideoView
         height.update(dt);
         volume.update(dt);
         if (video != null) {
-            video.volume = volume._;
+            video.volume = System.volume._ * volume._;
         }
         return (video == null);
     }
