@@ -333,9 +333,11 @@ class FlashVideoView
         
         _video.width = width._;
         _video.height = height._;
-        
+
         if (_videoWidth > 0 && _videoHeight > 0) {
-            _video.scaleX = _video.scaleY = Math.min(_video.scaleX, _video.scaleY);
+            var nScale :Float = Math.min(width._ / _videoWidth, height._ / _videoHeight);
+            _video.width = Math.min(width._, _videoWidth * nScale);
+            _video.height = Math.min(height._, _videoHeight * nScale);
             _video.y = (height._ * .5) - (_video.height * .5);
             _video.x = (width._ * .5) - (_video.width * .5);
         }
