@@ -7,6 +7,7 @@ package flambe.platform.html;
 import flambe.asset.AssetEntry;
 import flambe.util.Signal0;
 import js.Lib;
+import js.Browser;
 
 import flambe.animation.AnimatedFloat;
 import flambe.asset.Manifest;
@@ -35,10 +36,10 @@ class HtmlVideo
         _container = container;
 
         // User action required on mobile safari only.
-        var ua:String = Lib.window.navigator.userAgent.toLowerCase();
+        var ua:String = Browser.navigator.userAgent.toLowerCase();
         _userActionRequired = (ua.indexOf("safari") > -1) && (ua.indexOf("mobile") > -1);
         
-        var vid = Lib.document.createElement("video");
+        var vid = Browser.document.createElement("video");
         var types = [
             { format: WEBM, mimeType: 'video/webm; codecs="vp8, vorbis"' },
             { format: MP4, mimeType: 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"' },
@@ -73,7 +74,7 @@ class HtmlVideo
 
     public function createView (x :Float, y :Float, width :Float, height :Float) :VideoView
     {
-        var video = Lib.document.createElement("video");
+        var video = Browser.document.createElement("video");
         video.style.position = "absolute";
         video.style.border = "0";
         (untyped video).preload = "auto";
@@ -92,7 +93,7 @@ class HtmlVideo
 }
 
 class HtmlVideoView
-    implements VideoView,
+    implements VideoView
     implements Tickable
 {
     public var error (default, null) :Signal1<String>;
@@ -188,7 +189,7 @@ class HtmlVideoView
         var i:Iterator<AssetEntry> = manifest.iterator();
         for (entry in i) {
             if (HtmlVideo.supportedTypes.indexOf(entry.format) > -1) {
-                var source = Lib.document.createElement("source");
+                var source = Browser.document.createElement("source");
                 (untyped source).src = entry.url;
                 video.innerHtml = "";
                 video.appendChild(source);

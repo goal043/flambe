@@ -18,6 +18,9 @@ enum AssetFormat
     // Audio
     MP3; M4A; OPUS; OGG; WAV;
 
+    // Video
+    WEBM; MP4; OGV; FLV;
+
     // Raw text/data
     Data;
 }

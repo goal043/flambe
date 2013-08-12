@@ -387,6 +387,14 @@ class HtmlPlatform
         return _web;
     }
 
+    public function getVideo () :VideoSystem
+    {
+        if (_video == null) {
+            _video = new HtmlVideo(_container);
+        }
+        return _video;
+    }
+
     public function getExternal () :ExternalSystem
     {
         if (_external == null) {
@@ -477,6 +485,7 @@ class HtmlPlatform
     private var _motion :MotionSystem;
     private var _storage :StorageSystem;
     private var _web :WebSystem;
+    private var _video :VideoSystem;
 
     private var _canvas :CanvasElement;
     private var _container :Element;

@@ -164,6 +164,14 @@ class FlashPlatform
         return _web;
     }
 
+    public function getVideo () :VideoSystem
+    {
+        if (_video == null) {
+            _video = new FlashVideo(_stage.nativeStage);
+        }
+        return _video;
+    }
+
     public function getExternal () :ExternalSystem
     {
         if (_external == null) {
@@ -269,6 +277,7 @@ class FlashPlatform
     private var _motion :MotionSystem;
     private var _storage :StorageSystem;
     private var _web :WebSystem;
+    private var _video :VideoSystem;
 
     private var _lastUpdate :Int;
     private var _skipFrame :Bool;
