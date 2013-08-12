@@ -131,11 +131,12 @@ class FlashVideoView
         var m:Manifest = new Manifest();
         for (i in 0...extensions.length) {
             var format:AssetFormat = null;
+            
             switch (extensions[i].toLowerCase()) {
                 case "mp4", "m4v", "f4v":
-                format = AssetFormat.MP4;
+                    format = AssetFormat.MP4;
                 case "flv":
-                format = AssetFormat.FLV;
+                    format = AssetFormat.FLV;
             }
 
             if (format != null) {
