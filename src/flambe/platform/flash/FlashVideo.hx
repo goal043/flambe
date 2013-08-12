@@ -90,8 +90,7 @@ class FlashVideoView
         this.y = new AnimatedFloat(y, onBoundsChanged);
         this.width = new AnimatedFloat(width, onBoundsChanged);
         this.height = new AnimatedFloat(height, onBoundsChanged);
-        this.volume = new AnimatedFloat(1);
-
+        this.volume = new AnimatedFloat(1, onVolumeChanged);
 
         stateChanged = new Signal2();
         progress = new Signal1();
@@ -201,6 +200,15 @@ class FlashVideoView
             _paused = true;
         }
         return this;
+    }
+
+    public function onVolumeChanged (volume :Float, _)
+    {
+        if (_ns != null) {        
+            var soundTransform = _ns.soundTransform;
+            soundTransform.volume = volume;
+            _ns.soundTransform = soundTransform; // Magic setter
+        }
     }
 
     private function get_videoWidth () :Float {
