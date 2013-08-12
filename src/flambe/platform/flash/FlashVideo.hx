@@ -61,7 +61,7 @@ class FlashVideo
 }
 
 class FlashVideoView
-    implements VideoView,
+    implements VideoView
     implements Tickable
 {
     public var error (default, null) :Signal1<String>;
