@@ -77,6 +77,7 @@ class HtmlVideo
         var video = Browser.document.createElement("video");
         video.style.position = "absolute";
         video.style.border = "0";
+        video.style.backgroundColor = "#000000";
         (untyped video).preload = "auto";
         (untyped video).autoplay = _userActionRequired;
         (untyped video).controls = _userActionRequired;
