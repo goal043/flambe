@@ -148,14 +148,16 @@ class HtmlVideoView
         });
         error = new Signal1();
 
-        // video.addEventListener("durationchange", onEvent);
-        // video.addEventListener("play", onEvent);
+        video.addEventListener("durationchange", onEvent);
+        video.addEventListener("play", onEvent);
         video.addEventListener("loadedmetadata", onEvent);
         video.addEventListener("playing", onEvent);
         video.addEventListener("canplay", onEvent);
         video.addEventListener("pause", onEvent);
         video.addEventListener("waiting", onEvent);
         video.addEventListener("ended", onEvent);
+        video.addEventListener("progress", onEvent);
+        video.addEventListener("timeupdate", onEvent);
     }
 
     public function seek(time:Float) :VideoView {
@@ -163,7 +165,7 @@ class HtmlVideoView
         if (_loaded && _metaLoaded) {
             video.currentTime = _seekTime;
             if (video.paused) {
-                video.play();
+                // video.play();
             }
         }
         return this;
@@ -217,6 +219,7 @@ class HtmlVideoView
                 video.play();
             }
             _paused = false;
+            setState(VideoState.playing);
         }
         return this;
     }
@@ -230,6 +233,7 @@ class HtmlVideoView
             }
 
             _paused = true;
+            setState(VideoState.paused);
         }
         return this;
     }
@@ -248,12 +252,16 @@ class HtmlVideoView
             return; // Already disposed
         }
 
+        video.removeEventListener("durationchange", onEvent);
+        video.removeEventListener("play", onEvent);
         video.removeEventListener("loadedmetadata", onEvent);
         video.removeEventListener("playing", onEvent);
         video.removeEventListener("canplay", onEvent);
         video.removeEventListener("pause", onEvent);
         video.removeEventListener("waiting", onEvent);
         video.removeEventListener("ended", onEvent);
+        video.removeEventListener("progress", onEvent);
+        video.removeEventListener("timeupdate", onEvent);
 
         _state = null;
         video.parentNode.removeChild(video);
@@ -273,6 +281,11 @@ class HtmlVideoView
         return (video == null);
     }
 
+    public function getState():VideoState
+    {
+        return _state;
+    }
+
     private function onEvent(e):Void  {
         switch (e.type) {
             //case "durationchange":
@@ -288,6 +301,12 @@ class HtmlVideoView
             case "playing":
                 _paused = false;
                 setState(VideoState.playing);
+
+            case "timeupdate":
+                currentTime = e.target.currentTime;
+                var evt:VideoProgressEvent = new VideoProgressEvent();
+                evt.init(null, currentTime, this);
+                progress.emit(evt);
 
             case "waiting":
                 setState(VideoState.buffering);
