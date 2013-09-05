@@ -156,6 +156,16 @@ interface VideoView
      * Pauses the video playback.
      */
     function pause() :VideoView;
+    
+    /**
+     * Returns the current state of the video.
+     */
+    function getState() :VideoState;
+
+    /**
+     * Permenantly removes the video.
+     */
+    function dispose() :Void;
 
 
 }
