@@ -114,7 +114,7 @@ class HtmlVideoView
     public var height (default, null) :AnimatedFloat;
     public var volume (default, null) :AnimatedFloat;
     public var duration (default, null) :Float;
-    public var currentTime (default, null) :Float;
+    public var currentTime (get, null) :Float;
     public var loop (default, null) :Value<Bool>;
     public var videoWidth (get_videoWidth, null) :Float;
     public var videoHeight (get_videoHeight, null) :Float;
@@ -241,6 +241,11 @@ class HtmlVideoView
 
     private function get_videoHeight () :Float {
         return video != null && _metaLoaded ? video.videoHeight : 0;
+    }
+
+    private function get_currentTime() :Float 
+    {
+        return _metaLoaded ? video.currentTime : 0;
     }
 
     public function dispose ()
