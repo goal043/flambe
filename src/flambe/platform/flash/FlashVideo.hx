@@ -4,6 +4,7 @@
 
 package flambe.platform.flash;
 
+import flambe.math.FMath;
 import flash.display.Sprite;
 import flash.display.Stage;
 import flash.events.IOErrorEvent;
@@ -76,7 +77,7 @@ class FlashVideoView
     public var height (default, null) :AnimatedFloat;
     public var volume (default, null) :AnimatedFloat;
     public var duration (default, null) :Float;
-    public var currentTime (default, null) :Float;
+    public var currentTime (get, null) :Float;
     public var loop (default, null) :Value<Bool>;
     public var videoWidth (get_videoWidth, null) :Float;
     public var videoHeight (get_videoHeight, null) :Float;
@@ -97,7 +98,7 @@ class FlashVideoView
         completed = new Signal0();
         ready = new Signal0();
         error = new Signal1();
-
+        duration = currentTime = 0;
         loop = new Value<Bool>(false);
 
         container = new Sprite();
@@ -220,6 +221,11 @@ class FlashVideoView
 
     private function get_videoHeight () :Float {
         return _video != null && _metaLoaded ? _video.videoHeight : 0;
+    }
+
+    private function get_currentTime () :Float
+    {
+        return _metaLoaded ? FMath.clamp(_ns.time, 0, duration) : 0;
     }
 
     public function dispose ()

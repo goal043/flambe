@@ -104,7 +104,7 @@ interface VideoView
      * The current time the playhead is at.
      * To seek to a different position, 
      */
-    var currentTime (default, null) :Float;
+    var currentTime (get, null) :Float;
 
     /**
      * The looping behavior of the video.
