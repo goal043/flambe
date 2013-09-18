@@ -262,16 +262,15 @@ class FlashVideoView
 
     private function onMetaData(e:Dynamic) {
         _metaLoaded = true;
-
         duration = e.duration;
         _videoWidth = e.width;
         _videoHeight = e.height;
-
+        updateBounds();
         setReady();
     }
 
     private function onEvent(e):Void  {
-        trace(e.info.code);
+        //trace(e.info.code);
         switch (e.info.code) {
             case "NetStream.Play.Start":
                 if (!_loaded) {
@@ -299,7 +298,7 @@ class FlashVideoView
             //     setState(VideoState.playing);
 
             case "NetStream.Buffer.Empty":
-                if (_state != VideoState.completed) {
+                if (this.state != VideoState.completed) {
                     _bufferFull = false;
                     setState(VideoState.buffering);
                 }
@@ -357,7 +356,8 @@ class FlashVideoView
         _video.width = width._;
         _video.height = height._;
 
-        if (_videoWidth > 0 && _videoHeight > 0) {
+        // if (_videoWidth > 0 && _videoHeight > 0) {
+        if (_metaLoaded) {
             var nScale :Float = Math.min(width._ / _videoWidth, height._ / _videoHeight);
             _video.width = Math.min(width._, _videoWidth * nScale);
             _video.height = Math.min(height._, _videoHeight * nScale);
@@ -370,27 +370,30 @@ class FlashVideoView
 
         if (_metaLoaded && _loaded && _bufferFull) {
 
-
             if (_seekTime > 0) {
                 _ns.seek(_seekTime);
             } else {
                 setState(VideoState.ready);
                 ready.emit();
             }
+    
+            if (!_autoPlay) {
+                setState(VideoState.paused);
+                _ns.pause();
+            } else {
+                setState(VideoState.playing);
+            }
 
         }
 
-        if (_metaLoaded && _loaded && _bufferFull && !_autoPlay) {
-            setState(VideoState.paused);
-            _ns.pause();
-        }
     }
 
     private function setState(state:VideoState) {
-        if(state != _state) {
-            var old:VideoState = _state;
-            _state = state;
-            stateChanged.emit(_state, old);
+        
+        if(state != this.state) {
+            var old :VideoState = this.state;
+            this.state = state;
+            stateChanged.emit(this.state, old);
         }
     }
 
@@ -405,7 +408,6 @@ class FlashVideoView
     private var _autoPlay :Bool = false;
     private var _seekTime :Float = 0;
     private var _metaLoaded :Bool = false;
-    private var _state :VideoState;
     private var _videoWidth :Float = 0;
     private var _videoHeight :Float = 0;
     /** Tracks if we should be monitoring progress or not. */

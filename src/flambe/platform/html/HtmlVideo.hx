@@ -170,7 +170,7 @@ class HtmlVideoView
     }
 
     public function load (url :String, extensions :Array<String>) :VideoView {
-        trace("HtmlVideo::load");
+
         var m:Manifest = new Manifest();
         for (i in 0...extensions.length) {
             var format:AssetFormat = null;
@@ -191,7 +191,6 @@ class HtmlVideoView
     }
 
     public function loadFromManifest (manifest :Manifest) :VideoView {
-        trace("HtmlVideo::loadFromManifest");
         clear();
 
         for (node in video.childNodes) {
@@ -213,7 +212,6 @@ class HtmlVideoView
     }
 
     public function play() :VideoView {
-        trace("HtmlVideo::play");
         if (_paused) {
             video.autoplay = true;
             if (_loaded) {
@@ -258,7 +256,7 @@ class HtmlVideoView
         video.removeEventListener("waiting", onEvent);
         video.removeEventListener("ended", onEvent);
 
-        _state = null;
+        state = null;
         video.parentNode.removeChild(video);
         video = null;
     }
@@ -277,7 +275,7 @@ class HtmlVideoView
     }
 
     private function onEvent(e):Void  {
-        trace("HtmlVideo::onEvent");
+        
         switch (e.type) {
             //case "durationchange":
             case "loadedmetadata":
@@ -329,7 +327,7 @@ class HtmlVideoView
     }
 
     private function setReady () {
-        trace("HtmlVideo::setReady");
+        
         if (_metaLoaded && _loaded) {
 
             if (_seekTime > 0) {
@@ -343,18 +341,11 @@ class HtmlVideoView
         }
     }
 
-    public function getState():VideoState
-    {
-        return _state;
-    }
-
     private function setState(state:VideoState) {
-        trace("HtmlVideo::setState");
-        trace(state);
-        if(state != _state) {
-            var old:VideoState = _state;
-            _state = state;
-            stateChanged.emit(_state, old);
+        if(this.state != state) {
+            var old:VideoState = this.state;
+            this.state = state;
+            stateChanged.emit(this.state, old);
         }
     }
 
@@ -362,6 +353,5 @@ class HtmlVideoView
     private var _loaded :Bool = false;
     private var _seekTime :Float = 0;
     private var _metaLoaded :Bool = false;
-    private var _state :VideoState;
 
 }

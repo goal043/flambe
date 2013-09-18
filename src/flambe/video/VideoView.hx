@@ -157,10 +157,4 @@ interface VideoView
      */
     function pause() :VideoView;
 
-    /**
-     * Returns the current video state.
-     */
-    function getState() :VideoState;
-
-
 }
