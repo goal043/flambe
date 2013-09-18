@@ -148,16 +148,14 @@ class HtmlVideoView
         });
         error = new Signal1();
 
-        video.addEventListener("durationchange", onEvent);
-        video.addEventListener("play", onEvent);
+        // video.addEventListener("durationchange", onEvent);
+        // video.addEventListener("play", onEvent);
         video.addEventListener("loadedmetadata", onEvent);
         video.addEventListener("playing", onEvent);
         video.addEventListener("canplay", onEvent);
         video.addEventListener("pause", onEvent);
         video.addEventListener("waiting", onEvent);
         video.addEventListener("ended", onEvent);
-        video.addEventListener("progress", onEvent);
-        video.addEventListener("timeupdate", onEvent);
     }
 
     public function seek(time:Float) :VideoView {
@@ -165,13 +163,14 @@ class HtmlVideoView
         if (_loaded && _metaLoaded) {
             video.currentTime = _seekTime;
             if (video.paused) {
-                // video.play();
+                video.play();
             }
         }
         return this;
     }
 
     public function load (url :String, extensions :Array<String>) :VideoView {
+        trace("HtmlVideo::load");
         var m:Manifest = new Manifest();
         for (i in 0...extensions.length) {
             var format:AssetFormat = null;
@@ -192,6 +191,7 @@ class HtmlVideoView
     }
 
     public function loadFromManifest (manifest :Manifest) :VideoView {
+        trace("HtmlVideo::loadFromManifest");
         clear();
 
         for (node in video.childNodes) {
@@ -213,13 +213,13 @@ class HtmlVideoView
     }
 
     public function play() :VideoView {
+        trace("HtmlVideo::play");
         if (_paused) {
             video.autoplay = true;
             if (_loaded) {
                 video.play();
             }
             _paused = false;
-            setState(VideoState.playing);
         }
         return this;
     }
@@ -233,7 +233,6 @@ class HtmlVideoView
             }
 
             _paused = true;
-            setState(VideoState.paused);
         }
         return this;
     }
@@ -252,16 +251,12 @@ class HtmlVideoView
             return; // Already disposed
         }
 
-        video.removeEventListener("durationchange", onEvent);
-        video.removeEventListener("play", onEvent);
         video.removeEventListener("loadedmetadata", onEvent);
         video.removeEventListener("playing", onEvent);
         video.removeEventListener("canplay", onEvent);
         video.removeEventListener("pause", onEvent);
         video.removeEventListener("waiting", onEvent);
         video.removeEventListener("ended", onEvent);
-        video.removeEventListener("progress", onEvent);
-        video.removeEventListener("timeupdate", onEvent);
 
         _state = null;
         video.parentNode.removeChild(video);
@@ -281,12 +276,8 @@ class HtmlVideoView
         return (video == null);
     }
 
-    public function getState():VideoState
-    {
-        return _state;
-    }
-
     private function onEvent(e):Void  {
+        trace("HtmlVideo::onEvent");
         switch (e.type) {
             //case "durationchange":
             case "loadedmetadata":
@@ -301,12 +292,6 @@ class HtmlVideoView
             case "playing":
                 _paused = false;
                 setState(VideoState.playing);
-
-            case "timeupdate":
-                currentTime = e.target.currentTime;
-                var evt:VideoProgressEvent = new VideoProgressEvent();
-                evt.init(null, currentTime, this);
-                progress.emit(evt);
 
             case "waiting":
                 setState(VideoState.buffering);
@@ -344,7 +329,7 @@ class HtmlVideoView
     }
 
     private function setReady () {
-        
+        trace("HtmlVideo::setReady");
         if (_metaLoaded && _loaded) {
 
             if (_seekTime > 0) {
@@ -358,7 +343,14 @@ class HtmlVideoView
         }
     }
 
+    public function getState():VideoState
+    {
+        return _state;
+    }
+
     private function setState(state:VideoState) {
+        trace("HtmlVideo::setState");
+        trace(state);
         if(state != _state) {
             var old:VideoState = _state;
             _state = state;

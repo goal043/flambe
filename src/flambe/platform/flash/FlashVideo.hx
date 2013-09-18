@@ -98,12 +98,10 @@ class FlashVideoView
         ready = new Signal0();
         error = new Signal1();
 
-        currentTime = 0;
-
         loop = new Value<Bool>(false);
 
         container = new Sprite();
-        _video = new flash.media.Video();
+        _video = new flash.media.Video ();
         _nc = new NetConnection();
         _nc.connect(null);
         _ns = new NetStream(_nc);
@@ -119,9 +117,7 @@ class FlashVideoView
 
     public function seek(time:Float) :VideoView {
         _seekTime = time;
-        trace(_state);
         if (_loaded && _metaLoaded) {
-            currentTime = time;
             _ns.seek(time);
             // video.currentTime = _seekTime;
             // if (video.paused) {
@@ -184,7 +180,7 @@ class FlashVideoView
 
     public function play() :VideoView {
         _autoPlay = true;
-        if (_paused || _state == VideoState.completed) {
+        if (_paused) {
             if (_loaded) {
                 _ns.resume();
                 setState(VideoState.playing);
@@ -256,19 +252,12 @@ class FlashVideoView
         width.update(dt);
         height.update(dt);
         volume.update(dt);
-        if (_updateProgress) 
-        {
+        if (_updateProgress) {
             var evt :VideoProgressEvent = new VideoProgressEvent();
-            currentTime = _ns.time;
             evt.init(null, currentTime, this);
             progress.emit(evt);
         }
         return (_video == null);
-    }
-
-    public function getState():VideoState
-    {
-        return _state;
     }
 
     private function onMetaData(e:Dynamic) {
@@ -297,11 +286,17 @@ class FlashVideoView
                     _updateProgress = true;
                     setReady();
                 }
-
+                // setState(VideoState.playing);
+                // _loaded = true;
+                // setReady();
+            // case "play":
             case "NetStream.Seek.InvalidTime":
                 if (Reflect.hasField(e,"info")) {
                     _ns.seek(Reflect.getProperty(e.info,"details"));
                 }
+            // case "playing":
+            //     _paused = false;
+            //     setState(VideoState.playing);
 
             case "NetStream.Buffer.Empty":
                 if (_state != VideoState.completed) {
@@ -315,13 +310,9 @@ class FlashVideoView
                     _updateProgress = false;
                     setState(VideoState.paused);
                 }
-
-            case "NetStream.Unpause.Notify":
-                if (_metaLoaded) {
-                    _paused = false;
-                    _updateProgress = true;
-                    setState(VideoState.playing);
-                }
+            // case "pause":
+            //     _paused = true;
+            //     setState(VideoState.paused);
 
             case "NetStream.Play.Complete", "NetStream.Play.Stop":
                 _seekTime = 0;
@@ -335,17 +326,6 @@ class FlashVideoView
 
             case "NetStream.Play.StreamNotFound":
                 error.emit("Stream not found");
-                
-                // setState(VideoState.playing);
-                // _loaded = true;
-                // setReady();
-            // case "play":
-            // case "playing":
-            //     _paused = false;
-            //     setState(VideoState.playing);
-            // case "pause":
-            //     _paused = true;
-            //     setState(VideoState.paused);
         }
     }
 
