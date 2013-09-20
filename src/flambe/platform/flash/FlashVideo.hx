@@ -258,9 +258,10 @@ class FlashVideoView
         width.update(dt);
         height.update(dt);
         volume.update(dt);
+
         if (_updateProgress) {
             var evt :VideoProgressEvent = new VideoProgressEvent();
-            evt.init(null, currentTime, this);
+            evt.init([{start:0, end:Math.min( (_ns.bytesLoaded / _ns.bytesTotal) * duration, duration) }], currentTime, this);
             progress.emit(evt);
         }
         return (_video == null);

@@ -148,8 +148,11 @@ class HtmlVideoView
         });
         error = new Signal1();
 
-        // video.addEventListener("durationchange", onEvent);
+        video.addEventListener("durationchange", onEvent);
+        video.addEventListener("progress", onEvent);
+
         // video.addEventListener("play", onEvent);
+        video.addEventListener("timeupdate", onEvent);
         video.addEventListener("loadedmetadata", onEvent);
         video.addEventListener("playing", onEvent);
         video.addEventListener("canplay", onEvent);
@@ -254,6 +257,8 @@ class HtmlVideoView
             return; // Already disposed
         }
 
+        video.removeEventListener("progress", onEvent);
+        video.removeEventListener("timeupdate", onEvent);
         video.removeEventListener("loadedmetadata", onEvent);
         video.removeEventListener("playing", onEvent);
         video.removeEventListener("canplay", onEvent);
@@ -282,7 +287,12 @@ class HtmlVideoView
     private function onEvent(e):Void  {
         
         switch (e.type) {
-            //case "durationchange":
+            case "timeupdate":
+                sendProgress();
+
+            case "progress":
+                sendProgress();
+
             case "loadedmetadata":
                 _metaLoaded = true;
                 duration = video.duration;
@@ -308,6 +318,22 @@ class HtmlVideoView
                 setState(VideoState.completed);
                 completed.emit();
         }
+    }
+
+    /**
+     * Sends the progress and prebuffer events.
+     * @return [description]
+     */
+    private function sendProgress()
+    {
+        var progressEvent :VideoProgressEvent = new VideoProgressEvent();
+        var timeRanges :Array<VideoTimeRange> = [];
+        for (i in 0...video.buffered.length) {
+            timeRanges.push({ start:video.buffered.start(i), end:video.buffered.end(i) });
+        }
+
+        progressEvent.init(timeRanges, video.currentTime, this);
+        progress.emit(progressEvent);
     }
 
     /**
