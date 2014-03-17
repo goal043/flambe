@@ -50,10 +50,7 @@ class Shape extends Sprite
      */
     public function addLineSegment(ptStart :Point, ptEnd :Point, width :Float, ?roundedCap :Bool = false) :Shape
     {
-        var prev :Segment = _segments;
-        _segments = new Segment(ptStart.x, ptStart.y, ptEnd.x, ptEnd.y, width, roundedCap);
-        _segments.next = prev;
-
+        addLineSegmentF(ptStart.x, ptStart.y, ptEnd.x, ptEnd.y, width, roundedCap);
         return this;
     }
 
