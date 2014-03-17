@@ -59,5 +59,5 @@ interface Graphics
     function fillRect (color :Int, x :Float, y :Float, width :Float, height :Float) :Void;
 
     /** Draws a line using the given specifications. */
-    function drawLine (color :Int, xStart :Float, yStart :Float, xEnd :Float, yEnd :Float, width :Float, roundedCap :Bool) :Void;
+    function drawLine (color :Int, startX :Float, startY :Float, endX :Float, endY :Float, width :Float, roundedCap :Bool) :Void;
 }

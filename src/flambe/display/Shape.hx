@@ -7,6 +7,7 @@ package flambe.display;
 import flambe.display.Sprite;
 import flambe.math.Point;
 import flambe.util.Assert;
+import flambe.util.Value;
 
 /**
  * A user defined shape (line, rectangle, polygon) that is assembled by adding
@@ -14,26 +15,32 @@ import flambe.util.Assert;
  */
 class Shape extends Sprite
 {
-    public var color(default, default) :Int;
-    private var segments :Array<Segment>;
+    /** The color of the shape */
+    public var color(default, null) :Value<Int>;
 
-    public function new()
+    public function new(?color :Int = 0x000000)
     {
         super();
+        this.color = new Value<Int>(color);
+    }
 
-        color = 0x000000;
-        segments = new Array<Segment>();
+    /**
+     * Clears out all the line segments.
+     */
+    public function clear()
+    {
+        _segments = null;
     }
 
     /**
      * Adds a line segment to this shape. The coordinates specified are local to the Shape's origin.
      * @returns This instance, for chaining.
      */
-    public function addLineSegmentF(xStart :Float, yStart :Float, xEnd :Float, yEnd :Float, width :Float, ?roundedCap :Bool = false) :Shape
+    public function addLineSegmentF(startX :Float, startY :Float, endX :Float, endY :Float, width :Float, ?roundedCap :Bool = false) :Shape
     {
-        var index = segments.length;
-        segments[index] = new Segment(xStart, yStart, xEnd, yEnd, width, roundedCap);
-
+        var prev :Segment = _segments;
+        _segments = new Segment(startX, startY, endX, endY, width, roundedCap);
+        _segments.next = prev;
         return this;
     }
 
@@ -43,8 +50,9 @@ class Shape extends Sprite
      */
     public function addLineSegment(ptStart :Point, ptEnd :Point, width :Float, ?roundedCap :Bool = false) :Shape
     {
-        var index = segments.length;
-        segments[index] = new Segment(ptStart.x, ptStart.y, ptEnd.x, ptEnd.y, width, roundedCap);
+        var prev :Segment = _segments;
+        _segments = new Segment(ptStart.x, ptStart.y, ptEnd.x, ptEnd.y, width, roundedCap);
+        _segments.next = prev;
 
         return this;
     }
@@ -53,12 +61,12 @@ class Shape extends Sprite
      * Adds a contiguous line strip to this shape. The coordinates specified are local to the Shape's origin.
      * @returns This instance, for chaining.
      */
-    public function addLineStrip(ptArray :Array<Point>, width :Float, ?roundedCap :Bool = false)
+    public function addLineStrip(points :Array<Point>, width :Float, ?roundedCap :Bool = false)
     {
-        Assert.that(ptArray.length >= 2, "addLineStrip() must have at least '2' Points");
+        Assert.that(points.length >= 2, "addLineStrip() must have at least '2' Points");
 
-        for(i in 1...ptArray.length) {
-            addLineSegment(ptArray[i - 1], ptArray[i], width, roundedCap);
+        for(i in 1...points.length) {
+            addLineSegment(points[i - 1], points[i], width, roundedCap);
         }
 
         return this;
@@ -66,29 +74,42 @@ class Shape extends Sprite
 
     override public function draw (g :Graphics)
     {
-        for (seg in segments) {
-            seg.draw(g, color);
+        var c :Int = color._;
+        var seg :Segment = _segments;
+        while (seg != null) {
+            g.drawLine(c, seg.startX, seg.startY, seg.endX, seg.endY, seg.width, seg.roundedCap);
+            seg = seg.next;
         }
     }
+
+    /** The linked list of line segments */
+    private var _segments :Segment;
 }
 
 private class Segment
 {
-    public var ptStart :Point;
-    public var ptEnd :Point;
+    /** The starting x position for the line segment. */
+    public var startX :Float;
+    /** The ending x position for the line segment. */
+    public var endX :Float;
+    /** The ending y position for the line segment. */
+    public var endY :Float;
+    /** The starting y position of the line segment. */
+    public var startY :Float;
+    /** The length of the segment. */
     public var width :Float;
+    /** If the cap should be round or not. */
     public var roundedCap :Bool;
+    /** The next line segment in the list. */
+    public var next :Segment;
 
-    public function new(xStart :Float, yStart :Float, xEnd :Float, yEnd :Float, width :Float, roundedCap :Bool)
+    public function new(startX :Float, startY :Float, endX :Float, endY :Float, width :Float, roundedCap :Bool)
     {
-        ptStart = new Point(xStart, yStart);
-        ptEnd = new Point(xEnd, yEnd);
+        this.startX = startX;
+        this.startY = startY;
+        this.endX = endX;
+        this.endY = endY;
         this.width = width;
         this.roundedCap = roundedCap;
-    }
-
-    public function draw (g :Graphics, color :Int)
-    {
-        g.drawLine(color, ptStart.x, ptStart.y, ptEnd.x, ptEnd.y, width, roundedCap);
     }
 }
