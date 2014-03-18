@@ -5,7 +5,10 @@
 package flambe.display;
 
 import flambe.display.Sprite;
+import flambe.display.Texture;
+import flambe.math.FMath;
 import flambe.math.Point;
+import flambe.System;
 import flambe.util.Assert;
 import flambe.util.Value;
 
@@ -29,6 +32,10 @@ class Shape extends Sprite
      */
     public function clear()
     {
+        if (_texture != null) {
+            _texture.dispose();
+        }
+        _texture = null;
         _segments = null;
     }
 
@@ -38,6 +45,7 @@ class Shape extends Sprite
      */
     public function addLineSegmentF(startX :Float, startY :Float, endX :Float, endY :Float, width :Float, ?roundedCap :Bool = false) :Shape
     {
+        _recalculateWidth = true;
         var prev :Segment = _segments;
         _segments = new Segment(startX, startY, endX, endY, width, roundedCap);
         _segments.next = prev;
@@ -69,8 +77,34 @@ class Shape extends Sprite
         return this;
     }
 
+    /**
+     * Flattens the line segments into a single texture.
+     * @return This instance, for chaining.
+     */
+    public function flatten() :Shape
+    {
+        if (_recalculateWidth) {
+            recalculate();
+        }
+
+        var flattened :Texture = System.renderer.createTexture( Math.ceil(_width), Math.ceil(_height) );
+        draw(flattened.graphics);
+
+        if (_texture != null) {
+            _texture.dispose();
+        }
+
+        _texture = flattened;
+        _segments = null;
+        return this;
+    }
+
     override public function draw (g :Graphics)
     {
+        if (_texture != null) {
+            g.drawTexture(_texture, 0, 0);
+        }
+
         var c :Int = color._;
         var seg :Segment = _segments;
         while (seg != null) {
@@ -79,8 +113,59 @@ class Shape extends Sprite
         }
     }
 
+    override public function getNaturalWidth() :Float
+    {
+        if (_recalculateWidth) {
+            recalculate();
+        }
+        return _height;
+    }
+
+    override public function getNaturalHeight() :Float
+    {
+        if (_recalculateWidth) {
+            recalculate();
+        }
+        return _width;
+    }
+
+    private function recalculate()
+    {
+        var minX :Float = 0;
+        var minY :Float = 0;
+        var maxX :Float = 0;
+        var maxY :Float = 0;
+
+        var seg :Segment = _segments;
+        while (seg != null) {
+            minX = FMath.min( FMath.min(seg.endX, seg.startX) - seg.width, minX);
+            minY = FMath.min( FMath.min(seg.endY, seg.startY) - seg.width, minY);
+            maxX = FMath.max( FMath.max(seg.endX, seg.startX) + seg.width, maxX);
+            maxY = FMath.max( FMath.max(seg.endY, seg.startY) + seg.width, maxY);
+            seg = seg.next;
+        }
+
+        if (_texture != null) {
+            maxX = FMath.max(maxX, _texture.width);
+            maxY = FMath.max(maxY, _texture.height);            
+        }
+
+        _width = maxX - minX;
+        _height = maxY - minY;
+        trace("(" + _width + " x " + _height + ")");
+        _recalculateWidth = false;
+    }
+
     /** The linked list of line segments */
     private var _segments :Segment;
+    /** Texture used for flattened shapes. */
+    private var _texture :Texture;
+    /** comment */
+    private var _width :Float = 0;
+    /** comment */
+    private var _height :Float = 0;
+    /** comment */
+    private var _recalculateWidth :Bool;
 }
 
 private class Segment
