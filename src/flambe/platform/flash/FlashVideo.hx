@@ -129,9 +129,9 @@ class FlashVideoView
     }
 
     public function load (url :String, extensions :Array<String>) :VideoView {
-        var m:Manifest = new Manifest();
+        var manifest :Manifest = new Manifest();
         for (i in 0...extensions.length) {
-            var format:AssetFormat = null;
+            var format :AssetFormat = null;
             
             switch (extensions[i].toLowerCase()) {
                 case "mp4", "m4v", "f4v":
@@ -141,11 +141,11 @@ class FlashVideoView
             }
 
             if (format != null) {
-                m.add("", url + "." + extensions[i], format);
+                manifest.add("", url + "." + extensions[i], 0, format);
             }
         }
 
-        return loadFromManifest(m);
+        return loadFromManifest(manifest);
     }
 
     public function loadFromManifest (manifest :Manifest) :VideoView {
