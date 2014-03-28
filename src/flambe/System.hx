@@ -18,6 +18,7 @@ import flambe.subsystem.RendererSystem;
 import flambe.subsystem.StageSystem;
 import flambe.subsystem.StorageSystem;
 import flambe.subsystem.TouchSystem;
+import flambe.subsystem.VideoSystem;
 import flambe.subsystem.WebSystem;
 import flambe.util.Assert;
 import flambe.util.Logger;
