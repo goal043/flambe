@@ -5,6 +5,7 @@
 package flambe.platform.html;
 
 import flambe.asset.AssetEntry;
+import flambe.platform.html.HtmlStage;
 import flambe.System;
 import flambe.util.Signal0;
 import js.html.SourceElement;
@@ -361,10 +362,11 @@ class HtmlVideoView
         if (video == null) {
             return; // Already disposed
         }
-        video.style.left = x._ + "px";
-        video.style.top = y._ + "px";
-        video.width = Math.round(width._);
-        video.height = Math.round(height._);
+        var scaleFactor :Float = cast(System.stage, HtmlStage).scaleFactor;
+        video.style.left = (x._ / scaleFactor) + "px";
+        video.style.top = (y._ / scaleFactor) + "px";
+        video.width = Math.round(width._ / scaleFactor);
+        video.height = Math.round(height._ / scaleFactor);
     }
 
     private function setReady () {
