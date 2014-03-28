@@ -5,6 +5,7 @@
 package flambe.platform.flash;
 
 import flambe.math.FMath;
+import flambe.System;
 import flash.display.Sprite;
 import flash.display.Stage;
 import flash.events.IOErrorEvent;
@@ -92,6 +93,16 @@ class FlashVideoView
         this.width = new AnimatedFloat(width, onBoundsChanged);
         this.height = new AnimatedFloat(height, onBoundsChanged);
         this.volume = new AnimatedFloat(1, onVolumeChanged);
+
+        System.hidden.changed.connect(function(hidden,_){
+            if (!_paused && hidden) {
+                pause();
+                _wasPlaying = true;
+            } else if (_wasPlaying && !hidden) {
+                _wasPlaying = false;
+                play();
+            }
+        });
 
         stateChanged = new Signal2();
         progress = new Signal1();
@@ -421,4 +432,7 @@ class FlashVideoView
     private var _updateProgress :Bool = false;
     /** The background color */
     private var _bgColor :Null<Int>;
+    /** Used to pause during system hidden events */
+    private var _wasPlaying :Bool = false;
+
 }

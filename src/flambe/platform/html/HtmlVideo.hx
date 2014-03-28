@@ -5,6 +5,7 @@
 package flambe.platform.html;
 
 import flambe.asset.AssetEntry;
+import flambe.System;
 import flambe.util.Signal0;
 import js.html.SourceElement;
 import js.html.VideoElement;
@@ -133,6 +134,15 @@ class HtmlVideoView
         this.width = new AnimatedFloat(width, onBoundsChanged);
         this.height = new AnimatedFloat(height, onBoundsChanged);
         this.volume = new AnimatedFloat(1);
+        System.hidden.changed.connect(function(hidden,_){
+            if (!_paused && hidden) {
+                pause();
+                _wasPlaying = true;
+            } else if (_wasPlaying && !hidden) {
+                _wasPlaying = false;
+                play();
+            }
+        });
 
         updateBounds();
 
@@ -384,5 +394,7 @@ class HtmlVideoView
     private var _loaded :Bool = false;
     private var _seekTime :Float = 0;
     private var _metaLoaded :Bool = false;
+    /** Used to pause during system hidden events */
+    private var _wasPlaying :Bool = false;
 
 }
